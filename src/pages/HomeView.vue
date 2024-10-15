@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import {
   FwbButton,
   FwbCard,
+  FwbFooter,
   FwbHeading,
   FwbP,
   FwbRange,
@@ -99,4 +100,13 @@ const stop = () => {
       <FwbButton :disabled="!isSpeaking" @click="stop" class="my-4 mr-2">Stop</FwbButton>
     </form>
   </FwbCard>
+
+  <FwbFooter class="mt-auto">
+    <RouterLink
+      :to="{ name: 'instructions' }"
+      class="hover:underline text-sm font-medium text-gray-500 dark:text-gray-400 mx-auto"
+    >
+      How to add more voices
+    </RouterLink>
+  </FwbFooter>
 </template>
