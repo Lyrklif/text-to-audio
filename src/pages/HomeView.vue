@@ -64,6 +64,13 @@ const onPlay = () => {
     >
       <FwbSelect v-model="voice" :options="voices" label="Select a voice" />
 
+      <RouterLink
+        :to="{ name: 'instructions' }"
+        class="hover:underline text-md font-medium text-gray-500 dark:text-gray-400 mx-auto"
+      >
+        How to add more voices
+      </RouterLink>
+
       <FwbRange
         v-model="speed"
         :min="0.5"

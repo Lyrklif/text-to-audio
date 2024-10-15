@@ -9,19 +9,10 @@ import { FwbA, FwbCard, FwbFooter, FwbHeading } from 'flowbite-vue'
       <FwbHeading tag="h1" class="text-center">Text to audio</FwbHeading>
     </FwbCard>
 
-    <div>
-      <RouterView />
-    </div>
+    <RouterView />
 
     <FwbFooter>
-      <RouterLink
-        :to="{ name: 'instructions' }"
-        class="hover:underline text-md font-medium text-gray-500 dark:text-gray-400 mx-auto"
-      >
-        How to add more voices
-      </RouterLink>
-
-      <FwbA href="#">GitHub</FwbA>
+      <FwbA href="#" class="ml-auto">GitHub</FwbA>
     </FwbFooter>
   </div>
 </template>
