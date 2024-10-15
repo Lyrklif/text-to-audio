@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
 
 const synth = window.speechSynthesis
 
@@ -11,7 +12,7 @@ export const useVoice = () => {
   }
 
   const isSpeaking = ref(false)
-  const synthVoices = ref<SpeechSynthesisVoice[]>([])
+  const synthVoices = ref<SpeechSynthesisVoice[]>(synth.getVoices())
 
   function loadVoices() {
     synthVoices.value = synth.getVoices()
@@ -23,7 +24,7 @@ export const useVoice = () => {
   }
 
   const playText = (message: string, voiceName: string, optional?: TOptional) => {
-    const { speed = 1, pitch = 1 } = optional || {}
+    const { speed = SPEED_DEFAULT, pitch = PITCH_DEFAULT } = optional || {}
 
     const finded = synthVoices.value.find(({ name }) => name === voiceName)
 

@@ -11,13 +11,14 @@ import {
   FwbTextarea
 } from 'flowbite-vue'
 import { useVoice } from '@/hooks/useVoice'
+import { PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
 
 const { stop, playText, isSpeaking, synthVoices } = useVoice()
 
 const message = ref('')
 const voice = ref<string | null>(null)
-const speed = ref(1.0)
-const pitch = ref(1.0)
+const speed = ref(SPEED_DEFAULT)
+const pitch = ref(PITCH_DEFAULT)
 
 const voices = computed(() => {
   return synthVoices.value.map(({ name }) => ({ value: name, name }))
