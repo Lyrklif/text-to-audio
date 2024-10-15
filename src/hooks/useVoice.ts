@@ -21,7 +21,7 @@ export const useVoice = () => {
   type TOptional = {
     speed?: number
     pitch?: number
-    onBoundary?: (charIndex: number, charLength: number) => void
+    onBoundary?: (charIndex: number, charLength: number, elapsedTime: number) => void
   }
 
   const playText = (message: string, voiceName: string, optional?: TOptional) => {
@@ -50,13 +50,13 @@ export const useVoice = () => {
       isSpeaking.value = false
 
       if (onBoundary) {
-        onBoundary(0, 0)
+        onBoundary(0, 0, 0)
       }
     }
 
     utterThis.onboundary = (event) => {
       if (onBoundary) {
-        onBoundary(event.charIndex, event.charLength)
+        onBoundary(event.charIndex, event.charLength, event.elapsedTime)
       }
     }
 
