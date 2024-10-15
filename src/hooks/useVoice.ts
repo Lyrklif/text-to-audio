@@ -21,10 +21,11 @@ export const useVoice = () => {
   type TOptional = {
     speed?: number
     pitch?: number
+    onBoundary?: (charIndex: number, charLength: number) => void
   }
 
   const playText = (message: string, voiceName: string, optional?: TOptional) => {
-    const { speed = SPEED_DEFAULT, pitch = PITCH_DEFAULT } = optional || {}
+    const { speed = SPEED_DEFAULT, pitch = PITCH_DEFAULT, onBoundary } = optional || {}
 
     const finded = synthVoices.value.find(({ name }) => name === voiceName)
 
@@ -47,6 +48,16 @@ export const useVoice = () => {
 
     utterThis.onend = () => {
       isSpeaking.value = false
+
+      if (onBoundary) {
+        onBoundary(0, 0)
+      }
+    }
+
+    utterThis.onboundary = (event) => {
+      if (onBoundary) {
+        onBoundary(event.charIndex, event.charLength)
+      }
     }
 
     synth.speak(utterThis)

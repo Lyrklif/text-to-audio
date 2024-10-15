@@ -11,27 +11,36 @@ import {
   FwbTextarea
 } from 'flowbite-vue'
 import { useVoice } from '@/hooks/useVoice'
+import { useHighlightSpokenText } from '@/hooks/useHighlightSpokenText'
 import { DEFAULT_TEXT, MAX_TEXT_LENGTH, PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
 
 const { stop, playText, isSpeaking, synthVoices } = useVoice()
+const { highlight } = useHighlightSpokenText()
 
 const message = ref<string>(DEFAULT_TEXT)
 const voice = ref<string | null>(null)
 const speed = ref<number>(SPEED_DEFAULT)
 const pitch = ref<number>(PITCH_DEFAULT)
 
+const highlightText = ref('')
+
 const voices = computed(() => {
   return synthVoices.value.map(({ name }) => ({ value: name, name }))
 })
 
+const trimmedText = computed(() => {
+  return message.value.trim()
+})
+
+const onBoundary = (charIndex: number, charLength: number) => {
+  highlightText.value = highlight(trimmedText.value, charIndex, charLength)
+}
+
 const onPlay = () => {
   if (!voice.value) return
+  if (!trimmedText.value) return
 
-  const text = message.value.trim()
-
-  if (!text) return
-
-  playText(text, voice.value, { speed: speed.value, pitch: pitch.value })
+  playText(trimmedText.value, voice.value, { speed: speed.value, pitch: pitch.value, onBoundary })
 }
 </script>
 
@@ -63,6 +72,8 @@ const onPlay = () => {
       <FwbButton :disabled="isSpeaking" @click="onPlay" class="my-4 mr-2">Play</FwbButton>
       <FwbButton :disabled="!isSpeaking" @click="stop" class="my-4 mr-2">Stop</FwbButton>
     </form>
+
+    <div v-html="highlightText" />
   </FwbCard>
 
   <FwbFooter class="mt-auto">
