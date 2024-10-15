@@ -1,15 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import {
-  FwbButton,
-  FwbCard,
-  FwbFooter,
-  FwbHeading,
-  FwbP,
-  FwbRange,
-  FwbSelect,
-  FwbTextarea
-} from 'flowbite-vue'
+import { FwbButton, FwbCard, FwbP, FwbRange, FwbSelect, FwbTextarea } from 'flowbite-vue'
 import { useVoice } from '@/hooks/useVoice'
 import { useHighlightSpokenText } from '@/hooks/useHighlightSpokenText'
 import { DEFAULT_TEXT, MAX_TEXT_LENGTH, PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
@@ -34,7 +25,10 @@ const trimmedText = computed(() => {
 
 const onBoundary = (charIndex: number, charLength: number, elapsedTime: number) => {
   highlightText.value = highlight(trimmedText.value, charIndex, charLength)
-  timer.value = elapsedTime === 0 ? 0 : (elapsedTime % 60000) / 1000
+
+  if (elapsedTime !== 0) {
+    timer.value = (elapsedTime % 60000) / 1000
+  }
 }
 
 const onPlay = () => {
@@ -46,50 +40,55 @@ const onPlay = () => {
 </script>
 
 <template>
-  <FwbCard variant="image" class="mx-auto mt-10 p-5">
-    <FwbHeading tag="h1">Text to audio</FwbHeading>
-  </FwbCard>
-
-  <div class="flex flex-col md:flex-row gap-5 justify-center my-5">
-    <FwbCard variant="image" class="mx-auto md:mx-0 p-5">
-      <form @submit.prevent>
-        <FwbTextarea
-          v-model="message"
-          :disabled="isSpeaking"
-          :rows="10"
-          label=""
-          :maxlength="MAX_TEXT_LENGTH"
-          placeholder="Write your text..."
-        />
-        <FwbP class="text-right text-sm text-gray-400">
-          {{ message.length }} / {{ MAX_TEXT_LENGTH }}
-        </FwbP>
-
-        <FwbSelect v-model="voice" :options="voices" label="Select a voice" />
-
-        <FwbRange v-model="speed" :min="0.5" :max="2" :steps="0.1" label="Speed" />
-        <FwbP>Value: {{ speed }}</FwbP>
-
-        <FwbRange v-model="pitch" :min="0.0" :max="2" :steps="0.1" label="Pitch" />
-        <FwbP>Value: {{ pitch }}</FwbP>
-
-        <FwbButton :disabled="isSpeaking" @click="onPlay" class="my-4 mr-2">Play</FwbButton>
-        <FwbButton :disabled="!isSpeaking" @click="stop" class="my-4 mr-2">Stop</FwbButton>
-      </form>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <FwbCard
+      variant="image"
+      class="mx-auto md:mx-0 p-5 justify-self-center md:justify-self-end w-full"
+    >
+      <FwbTextarea
+        v-model="message"
+        :disabled="isSpeaking"
+        :rows="10"
+        label=""
+        :maxlength="MAX_TEXT_LENGTH"
+        placeholder="Write your text..."
+      />
+      <FwbP class="text-right text-sm text-gray-400">
+        {{ message.length }} / {{ MAX_TEXT_LENGTH }}
+      </FwbP>
     </FwbCard>
 
-    <FwbCard variant="image" class="mx-auto md:mx-0 p-5">
+    <FwbCard
+      variant="image"
+      class="mx-auto md:mx-0 p-5 justify-self-center md:justify-self-start w-full"
+    >
+      <FwbSelect v-model="voice" :options="voices" label="Select a voice" />
+
+      <FwbRange
+        v-model="speed"
+        :min="0.5"
+        :max="2"
+        :steps="0.1"
+        :label="`Speed: ${speed}`"
+        size="lg"
+      />
+
+      <FwbRange
+        v-model="pitch"
+        :min="0.0"
+        :max="2"
+        :steps="0.1"
+        :label="`Pitch: ${pitch}`"
+        size="lg"
+      />
+
+      <FwbButton :disabled="isSpeaking" @click="onPlay" class="my-4 mr-2">Play</FwbButton>
+      <FwbButton :disabled="!isSpeaking" @click="stop" class="my-4 mr-2">Stop</FwbButton>
+    </FwbCard>
+
+    <FwbCard variant="image" class="mx-auto p-5 md:col-span-2 justify-self-center w-full">
       <div v-html="highlightText" />
       <FwbP class="text-right text-sm text-gray-400">Elapsed: {{ timer.toFixed(2) }}s</FwbP>
     </FwbCard>
   </div>
-
-  <FwbFooter class="mt-auto">
-    <RouterLink
-      :to="{ name: 'instructions' }"
-      class="hover:underline text-sm font-medium text-gray-500 dark:text-gray-400 mx-auto"
-    >
-      How to add more voices
-    </RouterLink>
-  </FwbFooter>
 </template>
