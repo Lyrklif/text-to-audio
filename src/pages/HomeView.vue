@@ -12,6 +12,8 @@ import {
 
 const synth = window.speechSynthesis
 
+const isSpeaking = ref(false)
+
 const message = ref('')
 const voice = ref<string | null>(null)
 const speed = ref(1.0)
@@ -40,6 +42,18 @@ const playText = () => {
 
   const utterThis = new SpeechSynthesisUtterance(message.value)
 
+  utterThis.onstart = () => {
+    isSpeaking.value = true
+  }
+
+  utterThis.onerror = () => {
+    isSpeaking.value = false
+  }
+
+  utterThis.onend = () => {
+    isSpeaking.value = false
+  }
+
   const finded = synthVoices.value.find(({ name }) => name === voice.value)
 
   if (!finded) {
@@ -66,6 +80,7 @@ const stop = () => {
     <form class="mt-6" @submit.prevent>
       <FwbTextarea
         v-model="message"
+        :disabled="isSpeaking"
         :rows="10"
         label=""
         maxlength="200"
@@ -80,10 +95,8 @@ const stop = () => {
       <FwbRange v-model="pitch" :min="0.0" :max="2" :steps="0.1" label="Pitch" />
       <FwbP>Value: {{ pitch }}</FwbP>
 
-      <FwbButton @click="playText" class="my-4 mr-2">Play</FwbButton>
-      <FwbButton @click="stop" class="my-4 mr-2">Stop</FwbButton>
+      <FwbButton :disabled="isSpeaking" @click="playText" class="my-4 mr-2">Play</FwbButton>
+      <FwbButton :disabled="!isSpeaking" @click="stop" class="my-4 mr-2">Stop</FwbButton>
     </form>
-
-    <FwbP>{{ message }}</FwbP>
   </FwbCard>
 </template>
