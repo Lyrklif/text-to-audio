@@ -10,63 +10,27 @@ import {
   FwbSelect,
   FwbTextarea
 } from 'flowbite-vue'
+import { useVoice } from '@/hooks/useVoice'
 
-const synth = window.speechSynthesis
-
-const isSpeaking = ref(false)
+const { stop, playText, isSpeaking, synthVoices } = useVoice()
 
 const message = ref('')
 const voice = ref<string | null>(null)
 const speed = ref(1.0)
 const pitch = ref(1.0)
-const synthVoices = ref<SpeechSynthesisVoice[]>([])
-
-function loadVoices() {
-  synthVoices.value = synth.getVoices()
-}
 
 const voices = computed(() => {
   return synthVoices.value.map(({ name }) => ({ value: name, name }))
 })
 
-// in Google Chrome the voices are not ready on page load
-if ('onvoiceschanged' in synth) {
-  synth.onvoiceschanged = loadVoices
-} else {
-  loadVoices()
-}
-
-const playText = () => {
+const onPlay = () => {
   if (!voice.value) return
 
-  const finded = synthVoices.value.find(({ name }) => name === voice.value)
+  const text = message.value.trim()
 
-  if (!finded) return
+  if (!text) return
 
-  const utterThis = new SpeechSynthesisUtterance(message.value)
-
-  utterThis.voice = finded
-  utterThis.lang = finded.lang
-  utterThis.rate = speed.value
-  utterThis.pitch = pitch.value
-
-  utterThis.onstart = () => {
-    isSpeaking.value = true
-  }
-
-  utterThis.onerror = () => {
-    isSpeaking.value = false
-  }
-
-  utterThis.onend = () => {
-    isSpeaking.value = false
-  }
-
-  synth.speak(utterThis)
-}
-
-const stop = () => {
-  synth.cancel()
+  playText(text, voice.value, { speed: speed.value, pitch: pitch.value })
 }
 </script>
 
@@ -92,7 +56,7 @@ const stop = () => {
       <FwbRange v-model="pitch" :min="0.0" :max="2" :steps="0.1" label="Pitch" />
       <FwbP>Value: {{ pitch }}</FwbP>
 
-      <FwbButton :disabled="isSpeaking" @click="playText" class="my-4 mr-2">Play</FwbButton>
+      <FwbButton :disabled="isSpeaking" @click="onPlay" class="my-4 mr-2">Play</FwbButton>
       <FwbButton :disabled="!isSpeaking" @click="stop" class="my-4 mr-2">Stop</FwbButton>
     </form>
   </FwbCard>
