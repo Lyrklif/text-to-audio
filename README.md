@@ -1,3 +1,7 @@
+### Flowbite Vue 3  
+[link](https://flowbite-vue.com/) Vue component library based on Tailwind CSS  
+
+
 ## Project Setup
 
 ```sh
