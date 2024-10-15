@@ -37,11 +37,18 @@ if ('onvoiceschanged' in synth) {
 }
 
 const playText = () => {
-  if (!voice.value) {
-    return
-  }
+  if (!voice.value) return
+
+  const finded = synthVoices.value.find(({ name }) => name === voice.value)
+
+  if (!finded) return
 
   const utterThis = new SpeechSynthesisUtterance(message.value)
+
+  utterThis.voice = finded
+  utterThis.lang = finded.lang
+  utterThis.rate = speed.value
+  utterThis.pitch = pitch.value
 
   utterThis.onstart = () => {
     isSpeaking.value = true
@@ -54,17 +61,6 @@ const playText = () => {
   utterThis.onend = () => {
     isSpeaking.value = false
   }
-
-  const finded = synthVoices.value.find(({ name }) => name === voice.value)
-
-  if (!finded) {
-    return
-  }
-
-  utterThis.voice = finded
-  utterThis.lang = finded.lang
-  utterThis.rate = speed.value
-  utterThis.pitch = pitch.value
 
   synth.speak(utterThis)
 }
