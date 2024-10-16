@@ -20,24 +20,23 @@ const highlightClasses = 'bg-blue-100 dark:bg-blue-200 text-blue-800 dark:text-b
 const { stop, playText, isSpeaking, synthVoices, errorText } = useVoice()
 const { highlight, setText } = useHighlightText()
 
-const message = ref<string>(DEFAULT_TEXT)
+const originalMessage = ref<string>(DEFAULT_TEXT)
 const voice = ref<string | null>(null)
 const speed = ref<number>(SPEED_DEFAULT)
 const pitch = ref<number>(PITCH_DEFAULT)
-const highlightText = ref<string>(DEFAULT_TEXT)
+const highlightedMessage = ref<string>(DEFAULT_TEXT)
 const timer = ref<number>(0)
+
+const trimmedMessage = computed(() => {
+  return originalMessage.value.trim()
+})
 
 const voices = computed(() => {
   return synthVoices.value.map(({ name }) => ({ value: name, name }))
 })
 
-const trimmedText = computed(() => {
-  return message.value.trim()
-})
-
 const onBoundary = (charIndex: number, charLength: number, elapsedTime: number) => {
-  setText(escapeHtml(trimmedText.value))
-  highlightText.value = highlight(charIndex, charLength, highlightClasses)
+  highlightedMessage.value = highlight(charIndex, charLength, highlightClasses)
 
   if (elapsedTime !== 0) {
     timer.value = (elapsedTime % 60000) / 1000
@@ -45,13 +44,18 @@ const onBoundary = (charIndex: number, charLength: number, elapsedTime: number) 
 }
 
 const onPlay = () => {
-  if (!voice.value || !trimmedText.value) return
+  if (!voice.value || !trimmedMessage.value) return
 
-  playText(trimmedText.value, voice.value, { speed: speed.value, pitch: pitch.value, onBoundary })
+  setText(escapeHtml(trimmedMessage.value))
+  playText(trimmedMessage.value, voice.value, {
+    speed: speed.value,
+    pitch: pitch.value,
+    onBoundary
+  })
 }
 
 const resetText = () => {
-  message.value = ''
+  originalMessage.value = ''
 }
 </script>
 
@@ -62,7 +66,7 @@ const resetText = () => {
       class="mx-auto md:mx-0 p-5 justify-self-center md:justify-self-end w-full"
     >
       <FwbTextarea
-        v-model="message"
+        v-model="originalMessage"
         :disabled="isSpeaking"
         :rows="10"
         label=""
@@ -72,7 +76,7 @@ const resetText = () => {
 
       <div class="flex justify-end items-center gap-2">
         <FwbP class="text-right text-sm text-gray-400 mb-0">
-          {{ message.length }} / {{ MAX_TEXT_LENGTH }}
+          {{ originalMessage.length }} / {{ MAX_TEXT_LENGTH }}
         </FwbP>
 
         <FwbButton :disabled="isSpeaking" @click="resetText" color="light" size="xs" class="ml-2">
@@ -124,7 +128,7 @@ const resetText = () => {
       </FwbAlert>
 
       <div v-else>
-        <div v-html="highlightText" />
+        <div v-html="highlightedMessage" />
         <FwbP class="text-right text-sm text-gray-400">Elapsed: {{ timer.toFixed(2) }}s</FwbP>
       </div>
     </FwbCard>
