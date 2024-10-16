@@ -44,10 +44,12 @@ const onBoundary = (charIndex: number, charLength: number, elapsedTime: number) 
 }
 
 const onPlay = () => {
-  if (!voice.value || !trimmedMessage.value) return
+  if (isSpeaking.value || !voice.value || !trimmedMessage.value) return
 
-  setText(escapeHtml(trimmedMessage.value))
-  playText(trimmedMessage.value, voice.value, {
+  const safeText = escapeHtml(trimmedMessage.value)
+
+  setText(safeText)
+  playText(safeText, voice.value, {
     speed: speed.value,
     pitch: pitch.value,
     onBoundary
