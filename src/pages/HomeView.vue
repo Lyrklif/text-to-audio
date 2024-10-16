@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { FwbButton, FwbCard, FwbP, FwbRange, FwbSelect, FwbTextarea } from 'flowbite-vue'
+import { FwbAlert, FwbButton, FwbCard, FwbP, FwbRange, FwbSelect, FwbTextarea } from 'flowbite-vue'
 import { useVoice } from '@/hooks/useVoice'
 import { useHighlightSpokenText } from '@/hooks/useHighlightSpokenText'
 import { DEFAULT_TEXT, MAX_TEXT_LENGTH, PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
 
-const { stop, playText, isSpeaking, synthVoices } = useVoice()
+const { stop, playText, isSpeaking, synthVoices, errorText } = useVoice()
 const { highlight } = useHighlightSpokenText()
 
 const message = ref<string>(DEFAULT_TEXT)
@@ -94,8 +94,14 @@ const onPlay = () => {
     </FwbCard>
 
     <FwbCard variant="image" class="mx-auto p-5 md:col-span-2 justify-self-center w-full">
-      <div v-html="highlightText" />
-      <FwbP class="text-right text-sm text-gray-400">Elapsed: {{ timer.toFixed(2) }}s</FwbP>
+      <FwbAlert v-if="errorText" type="danger">
+        {{ errorText }}
+      </FwbAlert>
+
+      <div v-else>
+        <div v-html="highlightText" />
+        <FwbP class="text-right text-sm text-gray-400">Elapsed: {{ timer.toFixed(2) }}s</FwbP>
+      </div>
     </FwbCard>
   </div>
 </template>

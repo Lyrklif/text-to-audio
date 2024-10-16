@@ -13,17 +13,24 @@ export const useVoice = () => {
 
   const isSpeaking = ref<boolean>(false)
   const synthVoices = ref<SpeechSynthesisVoice[]>([])
+  const errorText = ref<string>('')
 
   const loadVoices = () => {
-    synthVoices.value = synth.getVoices()
+    const voices = synth.getVoices()
+
+    if (voices.length > 0) {
+      synthVoices.value = voices
+
+      return
+    }
+
+    // in Google Chrome the voices are not ready on page load
+    synth.onvoiceschanged = () => {
+      synthVoices.value = synth.getVoices()
+    }
   }
 
-  // in Google Chrome the voices are not ready on page load
-  if ('onvoiceschanged' in synth) {
-    synth.onvoiceschanged = loadVoices
-  } else {
-    loadVoices()
-  }
+  loadVoices()
 
   const findVoice = (voiceName: string) => {
     return synthVoices.value.find(({ name }) => name === voiceName)
@@ -32,14 +39,16 @@ export const useVoice = () => {
   const playText = (message: string, voiceName: string, optional?: TOptional) => {
     const { speed = SPEED_DEFAULT, pitch = PITCH_DEFAULT, onBoundary } = optional || {}
 
+    errorText.value = ''
     const voice = findVoice(voiceName)
 
     if (!voice) {
-      console.error(`Voice "${voiceName}" not found`)
+      errorText.value = `Voice "${voiceName}" not found`
       return
     }
 
     synth.cancel()
+    isSpeaking.value = true
 
     const utterance = new SpeechSynthesisUtterance(message)
     utterance.voice = voice
@@ -47,13 +56,13 @@ export const useVoice = () => {
     utterance.rate = speed
     utterance.pitch = pitch
 
-    utterance.onstart = () => {
-      isSpeaking.value = true
-    }
-
-    utterance.onerror = (error) => {
+    utterance.onerror = (error: SpeechSynthesisErrorEvent) => {
       isSpeaking.value = false
-      console.error('SpeechSynthesis error:', error)
+      const errorValue: SpeechSynthesisErrorCode = error?.error
+
+      if (errorValue !== 'interrupted') {
+        errorText.value = `SpeechSynthesis error: ${errorValue}`
+      }
     }
 
     utterance.onend = () => {
@@ -77,6 +86,7 @@ export const useVoice = () => {
     stop,
     playText,
     isSpeaking,
-    synthVoices
+    synthVoices,
+    errorText
   }
 }
