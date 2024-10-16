@@ -11,8 +11,10 @@ import { FwbA, FwbCard, FwbFooter, FwbHeading } from 'flowbite-vue'
 
     <RouterView />
 
-    <FwbFooter>
-      <FwbA href="#" class="ml-auto">GitHub</FwbA>
+    <FwbFooter class="mt-auto mb-0">
+      <FwbA href="https://github.com/Lyrklif/text-to-audio" class="ml-auto" target="_blank">
+        GitHub
+      </FwbA>
     </FwbFooter>
   </div>
 </template>
