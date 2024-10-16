@@ -36,8 +36,7 @@ const onBoundary = (charIndex: number, charLength: number, elapsedTime: number) 
 }
 
 const onPlay = () => {
-  if (!voice.value) return
-  if (!trimmedText.value) return
+  if (!voice.value || !trimmedText.value) return
 
   playText(trimmedText.value, voice.value, { speed: speed.value, pitch: pitch.value, onBoundary })
 }
