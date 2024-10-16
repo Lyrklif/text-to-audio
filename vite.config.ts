@@ -5,23 +5,18 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from 'tailwindcss'
-import webfontDownload from 'vite-plugin-webfont-dl'
+
+const base = process.env.NODE_ENV === 'development' ? '/' : '/text-to-audio/'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueJsx(),
-    vueDevTools(),
-    webfontDownload([
-      'https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;600;800&display=swap'
-    ])
-  ],
+  plugins: [vue(), vueJsx(), vueDevTools()],
   css: {
     postcss: {
       plugins: [tailwindcss()]
     }
   },
+  base,
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
