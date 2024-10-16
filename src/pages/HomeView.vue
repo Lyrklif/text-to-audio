@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { FwbAlert, FwbButton, FwbCard, FwbP, FwbRange, FwbSelect, FwbTextarea } from 'flowbite-vue'
+import {
+  FwbAlert,
+  FwbBadge,
+  FwbButton,
+  FwbCard,
+  FwbP,
+  FwbRange,
+  FwbSelect,
+  FwbTextarea
+} from 'flowbite-vue'
 import { useVoice } from '@/hooks/useVoice'
 import { useHighlightText } from '@/hooks/useHighlightText'
 import { DEFAULT_TEXT, MAX_TEXT_LENGTH, PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
@@ -76,14 +85,16 @@ const resetText = () => {
       variant="image"
       class="mx-auto md:mx-0 p-5 justify-self-center md:justify-self-start w-full"
     >
-      <FwbSelect v-model="voice" :options="voices" label="Select a voice" />
-
       <RouterLink
         :to="{ name: 'instructions' }"
-        class="hover:underline text-md font-medium text-gray-500 dark:text-gray-400 mx-auto"
+        class="font-medium text-gray-500 dark:text-gray-400"
       >
-        How to add more voices
+        <FwbBadge type="red" class="hover:bg-red-200 mr-0 text-sm"
+          >How to add more voices
+        </FwbBadge>
       </RouterLink>
+
+      <FwbSelect v-model="voice" :options="voices" label="Select a voice" class="mt-3" />
 
       <FwbRange
         v-model="speed"
@@ -91,7 +102,7 @@ const resetText = () => {
         :max="2"
         :steps="0.1"
         :label="`Speed: ${speed}`"
-        size="lg"
+        class="mt-3"
       />
 
       <FwbRange
@@ -100,11 +111,11 @@ const resetText = () => {
         :max="2"
         :steps="0.1"
         :label="`Pitch: ${pitch}`"
-        size="lg"
+        class="mt-3"
       />
 
-      <FwbButton :disabled="isSpeaking" @click="onPlay" class="my-4 mr-2">Play</FwbButton>
-      <FwbButton :disabled="!isSpeaking" @click="stop" class="my-4 mr-2">Stop</FwbButton>
+      <FwbButton :disabled="isSpeaking" @click="onPlay" class="mt-6 mr-2">Play</FwbButton>
+      <FwbButton :disabled="!isSpeaking" @click="stop" class="mt-6 mr-2">Stop</FwbButton>
     </FwbCard>
 
     <FwbCard variant="image" class="mx-auto p-5 md:col-span-2 justify-self-center w-full">
