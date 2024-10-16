@@ -6,7 +6,7 @@ import { FwbA, FwbAlert, FwbCard, FwbP } from 'flowbite-vue'
   <FwbCard class="text-center mx-auto">
     <RouterLink
       :to="{ name: 'home' }"
-      class="block w-full text-md font-medium text-gray-500 dark:text-gray-400 mx-auto p-3"
+      class="block w-full text-md font-medium text-gray-500 mx-auto p-3"
     >
       Home
     </RouterLink>

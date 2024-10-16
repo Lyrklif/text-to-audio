@@ -4,17 +4,21 @@ import { FwbA, FwbCard, FwbFooter, FwbHeading } from 'flowbite-vue'
 </script>
 
 <template>
-  <div class="app gap-10 pt-10">
+  <div class="app gap-6 md:pt-10">
     <FwbCard variant="image" class="app-header mx-auto p-5">
       <FwbHeading tag="h1" class="text-center">Text to audio</FwbHeading>
     </FwbCard>
 
-    <main class="app-content">
+    <main class="app-content p-5">
       <RouterView />
     </main>
 
     <FwbFooter class="app-footer text-center justify-center">
-      <FwbA href="https://github.com/Lyrklif/text-to-audio" target="_blank" class="mx-auto">
+      <FwbA
+        href="https://github.com/Lyrklif/text-to-audio"
+        target="_blank"
+        class="mx-auto text-lg text-gray-900"
+      >
         GitHub
       </FwbA>
     </FwbFooter>
@@ -40,7 +44,6 @@ import { FwbA, FwbCard, FwbFooter, FwbHeading } from 'flowbite-vue'
 
 .app-content {
   grid-area: main;
-  padding: 15px 5px 10px 5px;
 }
 
 .app-footer {

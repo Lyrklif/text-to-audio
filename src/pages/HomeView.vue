@@ -15,7 +15,7 @@ import { useHighlightText } from '@/hooks/useHighlightText'
 import { DEFAULT_TEXT, MAX_TEXT_LENGTH, PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
 import { escapeHtml } from '@/helpers/escapeHtml'
 
-const highlightClasses = 'bg-blue-100 dark:bg-blue-200 text-blue-800 dark:text-blue-800'
+const highlightClasses = 'bg-blue-100 text-blue-800'
 
 const { stop, playText, isSpeaking, synthVoices, errorText } = useVoice()
 const { highlight, setText } = useHighlightText()
@@ -101,10 +101,7 @@ const resetText = () => {
       variant="image"
       class="mx-auto md:mx-0 p-5 justify-self-center md:justify-self-start w-full"
     >
-      <RouterLink
-        :to="{ name: 'instructions' }"
-        class="font-medium text-gray-500 dark:text-gray-400"
-      >
+      <RouterLink :to="{ name: 'instructions' }" class="font-medium text-gray-500">
         <FwbBadge type="yellow" class="hover:bg-yellow-200 mr-0 text-sm">
           How to add more voices
         </FwbBadge>
