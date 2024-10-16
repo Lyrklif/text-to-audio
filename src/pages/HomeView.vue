@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
   FwbAlert,
   FwbBadge,
@@ -34,6 +34,16 @@ const trimmedMessage = computed(() => {
 const voices = computed(() => {
   return synthVoices.value.map(({ name }) => ({ value: name, name }))
 })
+
+watch(
+  voices,
+  (array) => {
+    if (array.length > 0) {
+      voice.value = array[0].value
+    }
+  },
+  { immediate: true }
+)
 
 const onBoundary = (charIndex: number, charLength: number, elapsedTime: number) => {
   highlightedMessage.value = highlight(charIndex, charLength, highlightClasses)
