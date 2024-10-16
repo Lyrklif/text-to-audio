@@ -39,6 +39,10 @@ const onPlay = () => {
 
   playText(trimmedText.value, voice.value, { speed: speed.value, pitch: pitch.value, onBoundary })
 }
+
+const resetText = () => {
+  message.value = ''
+}
 </script>
 
 <template>
@@ -55,9 +59,16 @@ const onPlay = () => {
         :maxlength="MAX_TEXT_LENGTH"
         placeholder="Write your text..."
       />
-      <FwbP class="text-right text-sm text-gray-400">
-        {{ message.length }} / {{ MAX_TEXT_LENGTH }}
-      </FwbP>
+
+      <div class="flex justify-end items-center gap-2">
+        <FwbP class="text-right text-sm text-gray-400 mb-0">
+          {{ message.length }} / {{ MAX_TEXT_LENGTH }}
+        </FwbP>
+
+        <FwbButton :disabled="isSpeaking" @click="resetText" color="light" size="xs" class="ml-2">
+          Reset
+        </FwbButton>
+      </div>
     </FwbCard>
 
     <FwbCard
