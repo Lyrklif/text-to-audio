@@ -20,9 +20,9 @@ export const useHighlightSpokenText = () => {
 
     const safeText = escapeHtml(text)
 
-    const before = safeText.slice(0, startIndex)
-    const target = safeText.slice(startIndex, startIndex + length)
-    const after = safeText.slice(startIndex + length)
+    const before = safeText.substring(0, startIndex)
+    const target = safeText.substring(startIndex, startIndex + length)
+    const after = safeText.substring(startIndex + length)
 
     return `${before}<mark class="${highlightClass}">${target}</mark>${after}`
   }
