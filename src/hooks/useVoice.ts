@@ -1,9 +1,23 @@
 import { ref } from 'vue'
 import { PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
 
-const synth = window.speechSynthesis
+type TOptional = {
+  speed?: number
+  pitch?: number
+  onBoundary?: (charIndex: number, charLength: number, elapsedTime: number) => void
+}
+const getSynth = () => window.speechSynthesis
 
 export const useVoice = () => {
+  const synth = getSynth()
+
+  const isSpeaking = ref<boolean>(false)
+  const synthVoices = ref<SpeechSynthesisVoice[]>([])
+
+  const loadVoices = () => {
+    synthVoices.value = synth.getVoices()
+  }
+
   // in Google Chrome the voices are not ready on page load
   if ('onvoiceschanged' in synth) {
     synth.onvoiceschanged = loadVoices
@@ -11,56 +25,48 @@ export const useVoice = () => {
     loadVoices()
   }
 
-  const isSpeaking = ref(false)
-  const synthVoices = ref<SpeechSynthesisVoice[]>(synth.getVoices())
-
-  function loadVoices() {
-    synthVoices.value = synth.getVoices()
-  }
-
-  type TOptional = {
-    speed?: number
-    pitch?: number
-    onBoundary?: (charIndex: number, charLength: number, elapsedTime: number) => void
+  const findVoice = (voiceName: string) => {
+    return synthVoices.value.find(({ name }) => name === voiceName)
   }
 
   const playText = (message: string, voiceName: string, optional?: TOptional) => {
     const { speed = SPEED_DEFAULT, pitch = PITCH_DEFAULT, onBoundary } = optional || {}
 
-    const finded = synthVoices.value.find(({ name }) => name === voiceName)
+    const voice = findVoice(voiceName)
 
-    if (!finded) return
+    if (!voice) {
+      console.error(`Voice "${voiceName}" not found`)
+      return
+    }
 
-    const utterThis = new SpeechSynthesisUtterance(message)
+    synth.cancel()
 
-    utterThis.voice = finded
-    utterThis.lang = finded.lang
-    utterThis.rate = speed
-    utterThis.pitch = pitch
+    const utterance = new SpeechSynthesisUtterance(message)
+    utterance.voice = voice
+    utterance.lang = voice.lang
+    utterance.rate = speed
+    utterance.pitch = pitch
 
-    utterThis.onstart = () => {
+    utterance.onstart = () => {
       isSpeaking.value = true
     }
 
-    utterThis.onerror = () => {
+    utterance.onerror = (error) => {
+      isSpeaking.value = false
+      console.error('SpeechSynthesis error:', error)
+    }
+
+    utterance.onend = () => {
       isSpeaking.value = false
     }
 
-    utterThis.onend = () => {
-      isSpeaking.value = false
-
-      if (onBoundary) {
-        onBoundary(0, 0, 0)
-      }
-    }
-
-    utterThis.onboundary = (event) => {
+    utterance.onboundary = (event) => {
       if (onBoundary) {
         onBoundary(event.charIndex, event.charLength, event.elapsedTime)
       }
     }
 
-    synth.speak(utterThis)
+    synth.speak(utterance)
   }
 
   const stop = () => {
