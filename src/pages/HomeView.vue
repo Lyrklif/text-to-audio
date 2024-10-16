@@ -5,6 +5,8 @@ import { useVoice } from '@/hooks/useVoice'
 import { useHighlightSpokenText } from '@/hooks/useHighlightSpokenText'
 import { DEFAULT_TEXT, MAX_TEXT_LENGTH, PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
 
+const highlightClasses = 'bg-blue-100 dark:bg-blue-200 text-blue-800 dark:text-blue-800'
+
 const { stop, playText, isSpeaking, synthVoices, errorText } = useVoice()
 const { highlight } = useHighlightSpokenText()
 
@@ -24,7 +26,7 @@ const trimmedText = computed(() => {
 })
 
 const onBoundary = (charIndex: number, charLength: number, elapsedTime: number) => {
-  highlightText.value = highlight(trimmedText.value, charIndex, charLength)
+  highlightText.value = highlight(trimmedText.value, charIndex, charLength, highlightClasses)
 
   if (elapsedTime !== 0) {
     timer.value = (elapsedTime % 60000) / 1000
