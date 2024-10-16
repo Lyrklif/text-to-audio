@@ -36,7 +36,7 @@ export const useVoice = () => {
     return synthVoices.value.find(({ name }) => name === voiceName)
   }
 
-  const playText = (message: string, voiceName: string, optional?: TOptional) => {
+  const playText = (text: string, voiceName: string, optional?: TOptional) => {
     const { speed = SPEED_DEFAULT, pitch = PITCH_DEFAULT, onBoundary } = optional || {}
 
     errorText.value = ''
@@ -50,7 +50,7 @@ export const useVoice = () => {
     synth.cancel()
     isSpeaking.value = true
 
-    const utterance = new SpeechSynthesisUtterance(message)
+    const utterance = new SpeechSynthesisUtterance(text)
     utterance.voice = voice
     utterance.lang = voice.lang
     utterance.rate = speed

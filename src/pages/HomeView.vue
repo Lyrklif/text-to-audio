@@ -2,13 +2,14 @@
 import { computed, ref } from 'vue'
 import { FwbAlert, FwbButton, FwbCard, FwbP, FwbRange, FwbSelect, FwbTextarea } from 'flowbite-vue'
 import { useVoice } from '@/hooks/useVoice'
-import { useHighlightSpokenText } from '@/hooks/useHighlightSpokenText'
+import { useHighlightText } from '@/hooks/useHighlightText'
 import { DEFAULT_TEXT, MAX_TEXT_LENGTH, PITCH_DEFAULT, SPEED_DEFAULT } from '@/constatns/voice'
+import { escapeHtml } from '@/helpers/escapeHtml'
 
 const highlightClasses = 'bg-blue-100 dark:bg-blue-200 text-blue-800 dark:text-blue-800'
 
 const { stop, playText, isSpeaking, synthVoices, errorText } = useVoice()
-const { highlight } = useHighlightSpokenText()
+const { highlight, setText } = useHighlightText()
 
 const message = ref<string>(DEFAULT_TEXT)
 const voice = ref<string | null>(null)
@@ -26,7 +27,8 @@ const trimmedText = computed(() => {
 })
 
 const onBoundary = (charIndex: number, charLength: number, elapsedTime: number) => {
-  highlightText.value = highlight(trimmedText.value, charIndex, charLength, highlightClasses)
+  setText(escapeHtml(trimmedText.value))
+  highlightText.value = highlight(charIndex, charLength, highlightClasses)
 
   if (elapsedTime !== 0) {
     timer.value = (elapsedTime % 60000) / 1000
