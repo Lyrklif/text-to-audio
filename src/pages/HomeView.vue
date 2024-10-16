@@ -105,8 +105,8 @@ const resetText = () => {
         :to="{ name: 'instructions' }"
         class="font-medium text-gray-500 dark:text-gray-400"
       >
-        <FwbBadge type="red" class="hover:bg-red-200 mr-0 text-sm"
-          >How to add more voices
+        <FwbBadge type="yellow" class="hover:bg-yellow-200 mr-0 text-sm">
+          How to add more voices
         </FwbBadge>
       </RouterLink>
 
