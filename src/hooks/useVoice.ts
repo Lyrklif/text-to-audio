@@ -65,8 +65,12 @@ export const useVoice = () => {
       }
     }
 
-    utterance.onend = () => {
+    utterance.onend = (event) => {
       isSpeaking.value = false
+      
+      if (onBoundary) {
+        onBoundary(0, 0, event.elapsedTime)
+      }
     }
 
     utterance.onboundary = (event) => {
